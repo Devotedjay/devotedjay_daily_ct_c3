@@ -1,24 +1,19 @@
-name: Daily Countdown
+name: Daily Countdown # force trigger
 
 on:
   schedule:
-    - cron: '0 17 * * *'  # chạy mỗi ngày lúc 00:00 giờ Việt Nam
-  workflow_dispatch:      # cho phép chạy thủ công nếu cần
+    - cron: '0 17 * * *'  # 00:00 giờ Việt Nam
+  workflow_dispatch:
 
 jobs:
-  send-countdown:
+  send_countdown:
     runs-on: ubuntu-latest
     steps:
-      - name: Lấy mã nguồn
-        uses: actions/checkout@v3
-
-      - name: Cài Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.10'
-
-      - name: Cài requests
-        run: pip install requests
-
-      - name: Chạy bot Discord
-        run: python daily.py
+      - name: Send countdown message
+        run: |
+          DAY=$(date -u +"%Y-%m-%d")
+          TARGET="2026-06-01"
+          REMAIN=$(( ( $(date -d $TARGET +%s) - $(date -d $DAY +%s) ) / 86400 ))
+          curl -H "Content-Type: application/json" -X POST \
+            -d "{\"content\": \"Chỉ còn $REMAIN ngày nữa đến 1/6/2026!\"}" \
+            https://discord.com/api/webhooks/xxxxx/xxxxx
