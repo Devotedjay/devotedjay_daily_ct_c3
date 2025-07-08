@@ -1,19 +1,19 @@
-name: Daily Countdown # force trigger
+name: Daily Countdown
 
 on:
   schedule:
-    - cron: '0 17 * * *'  # 00:00 giờ Việt Nam
-  workflow_dispatch:
+    - cron: '0 17 * * *'  # chạy lúc 00:00 giờ Việt Nam hằng ngày
+  workflow_dispatch:      # cho phép chạy thủ công
 
 jobs:
-  send_countdown:
+  send-countdown:
     runs-on: ubuntu-latest
     steps:
-      - name: Send countdown message
+      - name: Gửi tin nhắn Discord bằng curl
         run: |
-          DAY=$(date -u +"%Y-%m-%d")
+          TODAY=$(date -u +"%Y-%m-%d")
           TARGET="2026-06-01"
-          REMAIN=$(( ( $(date -d $TARGET +%s) - $(date -d $DAY +%s) ) / 86400 ))
+          REMAIN=$(( ( $(date -d "$TARGET" +%s) - $(date -d "$TODAY" +%s) ) / 86400 ))
           curl -H "Content-Type: application/json" -X POST \
-            -d "{\"content\": \"Chỉ còn $REMAIN ngày nữa đến 1/6/2026!\"}" \
-            https://discord.com/api/webhooks/xxxxx/xxxxx
+            -d "{\"content\": \"📅 Còn $REMAIN ngày nữa đến ngày 01/06/2026!\"}" \
+            https://discord.com/api/webhooks/1392061849813516369/9hfWDo5jghXYODrE2EL6czl9NmdiDC6zH-pA8II4tyJ-3lcMoGh9NkgpCFpt3y1Ncrj-
