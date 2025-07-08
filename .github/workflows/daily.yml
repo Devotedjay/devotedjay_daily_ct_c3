@@ -1,0 +1,24 @@
+name: Daily Countdown
+
+on:
+  schedule:
+    - cron: '0 17 * * *'  # chạy mỗi ngày lúc 00:00 giờ Việt Nam
+  workflow_dispatch:      # cho phép chạy thủ công nếu cần
+
+jobs:
+  send-countdown:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Lấy mã nguồn
+        uses: actions/checkout@v3
+
+      - name: Cài Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Cài requests
+        run: pip install requests
+
+      - name: Chạy bot Discord
+        run: python daily.py
