@@ -2,20 +2,26 @@ name: Daily Countdown
 
 on:
   schedule:
-    - cron: '0 17 * * *'  # chạy lúc 00:00 giờ Việt Nam mỗi ngày
-  workflow_dispatch:      # cho phép chạy thủ công nếu cần
+    - cron: '0 17 * * *'  # 00:00 giờ Việt Nam hằng ngày
+  workflow_dispatch:
 
 jobs:
   send-countdown:
     runs-on: ubuntu-latest
     steps:
-      - name: Gửi tin nhắn Discord bằng curl
+      - name: Checkout source
+        uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: pip install -U discord.py
+
+      - name: Run countdown bot
         env:
-          WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
-        run: |
-          TODAY=$(date -u +"%Y-%m-%d")
-          TARGET="2026-06-01"
-          REMAIN=$(( ( $(date -d "$TARGET" +%s) - $(date -d "$TODAY" +%s) ) / 86400 ))
-          curl -H "Content-Type: application/json" -X POST \
-            -d "{\"content\": \"📅 Còn $REMAIN ngày nữa đến ngày 01/06/2026!\"}" \
-            "$WEBHOOK_URL"
+          DISCORD_TOKEN: ${{ secrets.BOT_TOKEN }}
+          DISCORD_CHANNEL_ID: ${{ secrets.CHANNEL_ID }}
+        run: python daily.py
